@@ -1,0 +1,28 @@
+### MAVEN ###
+target/
+!.mvn/wrapper/maven-wrapper.jar
+**/exec-maven-plugin-tmp/
+
+### INTELLIJ / IDEA ###
+.idea/
+*.iml
+*.ipr
+*.iws
+
+### LOGS ###
+*.log
+logs/
+
+### OS FILES ###
+.DS_Store
+
+### JAVA ###
+*.class
+*.jar
+*.war
+*.ear
+
+### OTHER ###
+/bin/
+/out/
+/build/
