@@ -31,5 +31,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     @Query("SELECT DISTINCT p.condition FROM Product p ORDER BY p.condition")
     List<String> findAllConditions();
-}
 
+    // Find product by title+brand+model to ensure idempotent seed
+    java.util.Optional<Product> findByTitleAndBrandAndModel(String title, String brand, String model);
+}

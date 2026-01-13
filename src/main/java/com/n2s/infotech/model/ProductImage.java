@@ -16,12 +16,15 @@ public class ProductImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String url; // for MVP we'll store path or URL
+    @Column(nullable = false)
+    private String url; // URL complète Cloudinary
+
+    private String publicId; // Public ID Cloudinary pour la suppression
 
     private String altText;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 }
 

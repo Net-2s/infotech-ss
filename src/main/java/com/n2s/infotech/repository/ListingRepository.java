@@ -20,6 +20,8 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpec
 
     Page<Listing> findBySellerIdAndActiveTrue(Long sellerId, Pageable pageable);
 
+    List<Listing> findBySellerId(Long sellerId);
+
     @Query("SELECT l FROM Listing l WHERE l.active = true AND l.price BETWEEN :minPrice AND :maxPrice")
     Page<Listing> findByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
 

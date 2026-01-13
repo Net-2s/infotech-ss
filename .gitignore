@@ -1,28 +1,38 @@
-### MAVEN ###
-target/
-!.mvn/wrapper/maven-wrapper.jar
-**/exec-maven-plugin-tmp/
-
-### INTELLIJ / IDEA ###
-.idea/
-*.iml
-*.ipr
-*.iws
-
-### LOGS ###
-*.log
-logs/
-
-### OS FILES ###
-.DS_Store
-
-### JAVA ###
+# Compiled class files
 *.class
+target/
+build/
+
+# Log files
+*.log
+
+# Package Files
 *.jar
 *.war
+*.nar
 *.ear
+*.zip
+*.tar.gz
+*.rar
 
-### OTHER ###
-/bin/
-/out/
-/build/
+# IDE files
+.idea/
+*.iml
+*.iws
+.vscode/
+.DS_Store
+
+# Environment variables - IMPORTANT !
+.env
+.env.local
+.env.*.local
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# Application temporary files
+/temp/
+/tmp/
+

@@ -1,89 +1,57 @@
 package com.n2s.infotech.controller;
 
 import com.n2s.infotech.dto.CartItemDto;
-import com.n2s.infotech.model.CartItem;
-import com.n2s.infotech.model.Listing;
-import com.n2s.infotech.model.User;
-import com.n2s.infotech.repository.CartItemRepository;
-import com.n2s.infotech.repository.ListingRepository;
-import com.n2s.infotech.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import com.n2s.infotech.service.CartService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * Contrôleur pour la gestion du panier
+ * Tous les endpoints nécessitent une authentification
+ */
 @RestController
 @RequestMapping("/api/cart")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('USER', 'SELLER', 'ADMIN')")
 public class CartController {
 
-    private final CartItemRepository cartItemRepository;
-    private final ListingRepository listingRepository;
-    private final UserRepository userRepository;
+    private final CartService cartService;
 
     @GetMapping
-    public List<CartItemDto> getCart(@RequestParam Long userId) {
-        return cartItemRepository.findByUserId(userId).stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+    public ResponseEntity<List<CartItemDto>> getCart(@RequestParam Long userId) {
+        return ResponseEntity.ok(cartService.getUserCart(userId));
     }
 
     @PostMapping
-    public CartItemDto addToCart(@RequestBody CartItemDto dto, @RequestParam Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        Listing listing = listingRepository.findById(dto.getListingId())
-                .orElseThrow(() -> new RuntimeException("Listing not found"));
-
-        // Check if item already in cart
-        CartItem existingItem = cartItemRepository.findByUserIdAndListingId(user.getId(), listing.getId())
-                .orElse(null);
-
-        if (existingItem != null) {
-            existingItem.setQuantity(existingItem.getQuantity() + dto.getQuantity());
-            return toDto(cartItemRepository.save(existingItem));
-        }
-
-        CartItem cartItem = CartItem.builder()
-                .user(user)
-                .listing(listing)
-                .quantity(dto.getQuantity())
-                .build();
-
-        return toDto(cartItemRepository.save(cartItem));
+    public ResponseEntity<CartItemDto> addToCart(
+            @RequestBody CartItemDto dto,
+            @RequestParam Long userId
+    ) {
+        return ResponseEntity.ok(cartService.addToCart(userId, dto));
     }
 
     @PutMapping("/{id}")
-    public CartItemDto updateQuantity(@PathVariable Long id, @RequestBody CartItemDto dto) {
-        CartItem cartItem = cartItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cart item not found"));
-
-        cartItem.setQuantity(dto.getQuantity());
-        return toDto(cartItemRepository.save(cartItem));
+    public ResponseEntity<CartItemDto> updateQuantity(
+            @PathVariable Long id,
+            @RequestParam Integer quantity
+    ) {
+        return ResponseEntity.ok(cartService.updateQuantity(id, quantity));
     }
 
     @DeleteMapping("/{id}")
-    public void removeFromCart(@PathVariable Long id) {
-        cartItemRepository.deleteById(id);
+    public ResponseEntity<Void> removeFromCart(@PathVariable Long id) {
+        cartService.removeFromCart(id);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping
-    @Transactional
-    public void clearCart(@RequestParam Long userId) {
-        cartItemRepository.deleteByUserId(userId);
-    }
-
-    private CartItemDto toDto(CartItem item) {
-        return CartItemDto.builder()
-                .id(item.getId())
-                .listingId(item.getListing().getId())
-                .productTitle(item.getListing().getProduct().getTitle())
-                .productBrand(item.getListing().getProduct().getBrand())
-                .price(item.getListing().getPrice())
-                .quantity(item.getQuantity())
-                .sellerShopName(item.getListing().getSeller().getShopName())
-                .build();
+    public ResponseEntity<Void> clearCart(@RequestParam Long userId) {
+        cartService.clearCart(userId);
+        return ResponseEntity.noContent().build();
     }
 }
 

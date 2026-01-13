@@ -3,6 +3,9 @@ package com.n2s.infotech.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "seller_profiles")
 @Getter
@@ -25,5 +28,9 @@ public class SellerProfile {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "seller")
+    @Builder.Default
+    private List<Listing> listings = new ArrayList<>();
 }
 

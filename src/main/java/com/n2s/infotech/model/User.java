@@ -35,6 +35,9 @@ public class User {
     private String displayName;
 
     @Builder.Default
+    private Boolean enabled = true;
+
+    @Builder.Default
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)

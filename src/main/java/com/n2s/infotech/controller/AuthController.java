@@ -2,49 +2,63 @@ package com.n2s.infotech.controller;
 
 import com.n2s.infotech.dto.AuthRequest;
 import com.n2s.infotech.dto.AuthResponse;
-import com.n2s.infotech.model.Role;
-import com.n2s.infotech.model.User;
-import com.n2s.infotech.repository.UserRepository;
+import com.n2s.infotech.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
-
+/**
+ * Contrôleur pour l'authentification (login/register)
+ *
+ * Endpoints publics :
+ * - POST /api/auth/register : Créer un compte utilisateur
+ * - POST /api/auth/register?seller=true : Créer un compte vendeur
+ * - POST /api/auth/register/admin : Créer un compte admin (DEV ONLY)
+ * - POST /api/auth/login : Se connecter
+ */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UserRepository userRepository;
+    private final AuthService authService;
 
+    /**
+     * Inscription d'un nouvel utilisateur
+     * @param request Email et mot de passe
+     * @param seller Si true, l'utilisateur sera aussi un vendeur
+     * @return Token JWT
+     */
     @PostMapping("/register")
-    public AuthResponse register(@Valid @RequestBody AuthRequest req, @RequestParam(defaultValue = "false") boolean seller) {
-        if (userRepository.findByEmail(req.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
-        }
-
-        User u = User.builder()
-                .email(req.getEmail())
-                .password(req.getPassword()) // Pas de hashage pour simplifier
-                .displayName(req.getEmail())
-                .roles(seller ? Set.of(Role.ROLE_SELLER, Role.ROLE_USER) : Set.of(Role.ROLE_USER))
-                .build();
-        userRepository.save(u);
-
-        return new AuthResponse("no-token-needed");
+    public ResponseEntity<AuthResponse> register(
+            @Valid @RequestBody AuthRequest request,
+            @RequestParam(defaultValue = "false") boolean seller
+    ) {
+        AuthResponse response = authService.register(request, seller);
+        return ResponseEntity.ok(response);
     }
 
+    /**
+     * Connexion d'un utilisateur existant
+     * @param request Email et mot de passe
+     * @return Token JWT
+     */
     @PostMapping("/login")
-    public AuthResponse login(@Valid @RequestBody AuthRequest req) {
-        User user = userRepository.findByEmail(req.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
+        AuthResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
+    }
 
-        if (!user.getPassword().equals(req.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        return new AuthResponse("no-token-needed");
+    /**
+     * Créer un compte admin (DEV ONLY - À désactiver en production)
+     * @param request Email et mot de passe
+     * @return Token JWT
+     */
+    @PostMapping("/register/admin")
+    public ResponseEntity<AuthResponse> registerAdmin(@Valid @RequestBody AuthRequest request) {
+        AuthResponse response = authService.registerAdmin(request);
+        return ResponseEntity.ok(response);
     }
 }
 

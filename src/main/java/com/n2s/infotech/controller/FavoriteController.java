@@ -1,72 +1,54 @@
 package com.n2s.infotech.controller;
 
 import com.n2s.infotech.dto.FavoriteDto;
-import com.n2s.infotech.model.Favorite;
-import com.n2s.infotech.model.Product;
-import com.n2s.infotech.model.User;
-import com.n2s.infotech.repository.FavoriteRepository;
-import com.n2s.infotech.repository.ProductRepository;
-import com.n2s.infotech.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import com.n2s.infotech.service.FavoriteService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ * Contrôleur pour la gestion des favoris
+ * Tous les endpoints nécessitent une authentification
+ */
 @RestController
 @RequestMapping("/api/favorites")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('USER', 'SELLER', 'ADMIN')")
 public class FavoriteController {
 
-    private final FavoriteRepository favoriteRepository;
-    private final ProductRepository productRepository;
-    private final UserRepository userRepository;
+    private final FavoriteService favoriteService;
 
     @GetMapping
-    public List<FavoriteDto> getUserFavorites(@RequestParam Long userId) {
-        return favoriteRepository.findByUserId(userId).stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+    public ResponseEntity<List<FavoriteDto>> getUserFavorites(@RequestParam Long userId) {
+        return ResponseEntity.ok(favoriteService.getUserFavorites(userId));
     }
 
     @PostMapping("/{productId}")
-    public FavoriteDto addFavorite(@PathVariable Long productId, @RequestParam Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-
-        if (favoriteRepository.existsByUserIdAndProductId(userId, productId)) {
-            throw new RuntimeException("Product already in favorites");
-        }
-
-        Favorite favorite = Favorite.builder()
-                .user(user)
-                .product(product)
-                .build();
-
-        return toDto(favoriteRepository.save(favorite));
+    public ResponseEntity<FavoriteDto> addFavorite(
+            @PathVariable Long productId,
+            @RequestParam Long userId
+    ) {
+        return ResponseEntity.ok(favoriteService.addFavorite(productId, userId));
     }
 
     @DeleteMapping("/{productId}")
-    @Transactional
-    public void removeFavorite(@PathVariable Long productId, @RequestParam Long userId) {
-        favoriteRepository.deleteByUserIdAndProductId(userId, productId);
+    public ResponseEntity<Void> removeFavorite(
+            @PathVariable Long productId,
+            @RequestParam Long userId
+    ) {
+        favoriteService.removeFavorite(productId, userId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/check/{productId}")
-    public boolean isFavorite(@PathVariable Long productId, @RequestParam Long userId) {
-        return favoriteRepository.existsByUserIdAndProductId(userId, productId);
-    }
-
-    private FavoriteDto toDto(Favorite favorite) {
-        return FavoriteDto.builder()
-                .id(favorite.getId())
-                .productId(favorite.getProduct().getId())
-                .productTitle(favorite.getProduct().getTitle())
-                .productBrand(favorite.getProduct().getBrand())
-                .addedAt(favorite.getAddedAt())
-                .build();
+    public ResponseEntity<Boolean> isFavorite(
+            @PathVariable Long productId,
+            @RequestParam Long userId
+    ) {
+        return ResponseEntity.ok(favoriteService.isFavorite(productId, userId));
     }
 }
 

@@ -1,0 +1,39 @@
+[
+  {
+    "title": "iPhone 11 - 64GB",
+    "description": "Good condition iPhone 11, fully tested",
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "condition": "refurbished",
+    "category": "Smartphones",
+    "imageUrls": [
+      "https://res.cloudinary.com/demo/image/upload/sample.jpg"
+    ],
+    "passport": {
+      "carbonFootprint": {
+        "totalCO2": 42.5,
+        "manufacturing": 30.0,
+        "transportation": 5.5,
+        "usage": 5.0,
+        "endOfLife": 2.0
+      },
+      "traceability": {
+        "originCountry": "France",
+        "manufacturer": "FairPhone",
+        "factory": "Factory A - Netherlands",
+        "supplyChainJourney": ["Raw materials - Congo","Assembly - Netherlands"],
+        "transparencyScore": 95
+      },
+      "materials": [
+        {"name":"Aluminium recyclé","percentage":40.0,"renewable":false,"recycled":true,"recyclable":true},
+        {"name":"Plastique bio-sourcé","percentage":30.0,"renewable":true,"recycled":false,"recyclable":true},
+        {"name":"Composants électroniques","percentage":25.0,"renewable":false,"recycled":false,"recyclable":true},
+        {"name":"Verre","percentage":5.0,"renewable":false,"recycled":true,"recyclable":true}
+      ],
+      "durability": {"expectedLifespanYears":7,"repairabilityScore":9.2,"sparePartsAvailable":true,"warrantyYears":3,"softwareUpdates":true},
+      "certifications": [],
+      "recyclingInfo": {"recyclablePercentage":95.0,"instructions":"Recycle at local points","takeBackProgram":true,"collectionPoints":[]}
+    }
+  }
+]
+
