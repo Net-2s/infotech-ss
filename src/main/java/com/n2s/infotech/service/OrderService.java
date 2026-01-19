@@ -1,5 +1,7 @@
 package com.n2s.infotech.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.n2s.infotech.dto.CreateOrderRequest;
 import com.n2s.infotech.dto.OrderDto;
 import com.n2s.infotech.dto.OrderItemRequestDto;
@@ -13,6 +15,7 @@ import com.n2s.infotech.repository.OrderRepository;
 import com.n2s.infotech.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,12 +28,15 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ListingRepository listingRepository;
     private final UserRepository userRepository;
     private final CartItemRepository cartItemRepository;
+    private final StripeService stripeService;
+    private final ObjectMapper objectMapper;
 
     /**
      * Crée une nouvelle commande
@@ -40,10 +46,30 @@ public class OrderService {
         User buyer = userRepository.findById(request.getBuyerId())
                 .orElseThrow(() -> new RuntimeException("Buyer not found"));
 
+        // Vérifier que le paiement a réussi si paymentIntentId est fourni
+        if (request.getPaymentIntentId() != null && !request.getPaymentIntentId().isEmpty()) {
+            boolean paymentSuccess = stripeService.verifyPaymentSuccess(request.getPaymentIntentId());
+            if (!paymentSuccess) {
+                throw new RuntimeException("Le paiement n'a pas été confirmé");
+            }
+        }
+
         Order order = Order.builder()
                 .buyer(buyer)
                 .status("CREATED")
+                .paymentIntentId(request.getPaymentIntentId())
+                .paymentStatus(request.getPaymentIntentId() != null ? "succeeded" : "pending")
                 .build();
+
+        // Ajouter l'adresse de livraison si fournie
+        if (request.getShippingAddress() != null) {
+            try {
+                String addressJson = objectMapper.writeValueAsString(request.getShippingAddress());
+                order.setShippingAddress(addressJson);
+            } catch (JsonProcessingException e) {
+                log.error("Erreur lors de la sérialisation de l'adresse", e);
+            }
+        }
 
         List<OrderItem> items = new ArrayList<>();
         BigDecimal total = BigDecimal.ZERO;
@@ -79,6 +105,12 @@ public class OrderService {
 
         order.setItems(items);
         order.setTotal(total);
+        
+        // Mettre à jour le statut si le paiement est confirmé
+        if ("succeeded".equals(order.getPaymentStatus())) {
+            order.setStatus("PAID");
+        }
+        
         order = orderRepository.save(order);
 
         // Vider le panier après la commande

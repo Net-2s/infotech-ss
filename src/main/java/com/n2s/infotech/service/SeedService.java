@@ -49,7 +49,7 @@ public class SeedService {
 
         try {
             if (!generate) {
-                try (InputStream is = new ClassPathResource("seed/products-100.json").getInputStream()) {
+                try (InputStream is = new ClassPathResource("seed/products-sample.json").getInputStream()) {
                     data = objectMapper.readValue(is, new TypeReference<>() {});
                 }
             } else {
@@ -119,8 +119,11 @@ public class SeedService {
                     CreateDigitalPassportRequest passportReq = objectMapper.convertValue(passportMap, CreateDigitalPassportRequest.class);
                     passportReq.setProductId(p.getId());
                     try {
-                        digitalPassportService.create(passportReq);
-                        result.put("passportsCreated", result.get("passportsCreated") + 1);
+                        // Only create passport if it doesn't exist yet
+                        if (!digitalPassportService.existsByProductId(p.getId())) {
+                            digitalPassportService.create(passportReq);
+                            result.put("passportsCreated", result.get("passportsCreated") + 1);
+                        }
                     } catch (Exception e) {
                         log.warn("Failed to create passport for product {}: {}", p.getId(), e.getMessage());
                     }
@@ -163,47 +166,48 @@ public class SeedService {
             imgs.add(sampleImages.get(rnd.nextInt(sampleImages.size())));
             if (rnd.nextBoolean()) imgs.add(sampleImages.get(rnd.nextInt(sampleImages.size())));
             item.put("imageUrls", imgs);
-            // add passport to ~50%
-            if (rnd.nextDouble() < 0.5) {
-                Map<String, Object> passport = new HashMap<>();
-                Map<String, Object> cf = new HashMap<>();
-                cf.put("totalCO2", 30.0 + rnd.nextDouble()*50);
-                cf.put("manufacturing", 20.0 + rnd.nextDouble()*20);
-                cf.put("transportation", 3.0 + rnd.nextDouble()*10);
-                cf.put("usage", 5.0 + rnd.nextDouble()*10);
-                cf.put("endOfLife", 1.0 + rnd.nextDouble()*3);
-                passport.put("carbonFootprint", cf);
+            
+            // add passport to all products
+            Map<String, Object> passport = new HashMap<>();
+            Map<String, Object> cf = new HashMap<>();
+            cf.put("totalCO2", 30.0 + rnd.nextDouble()*50);
+            cf.put("manufacturing", 20.0 + rnd.nextDouble()*20);
+            cf.put("transportation", 3.0 + rnd.nextDouble()*10);
+            cf.put("usage", 5.0 + rnd.nextDouble()*10);
+            cf.put("endOfLife", 1.0 + rnd.nextDouble()*3);
+            passport.put("carbonFootprint", cf);
 
-                Map<String, Object> trace = new HashMap<>();
-                trace.put("originCountry", "France");
-                trace.put("manufacturer", brand + " Factory");
-                trace.put("factory", "Factory " + (rnd.nextInt(10)+1));
-                trace.put("supplyChainJourney", List.of("Step A","Step B"));
-                trace.put("transparencyScore", 70 + rnd.nextInt(30));
-                passport.put("traceability", trace);
+            Map<String, Object> trace = new HashMap<>();
+            trace.put("originCountry", "France");
+            trace.put("manufacturer", brand + " Factory");
+            trace.put("factory", "Factory " + (rnd.nextInt(10)+1));
+            trace.put("supplyChainJourney", List.of("Step A","Step B"));
+            trace.put("transparencyScore", 70 + rnd.nextInt(30));
+            passport.put("traceability", trace);
 
-                List<Map<String, Object>> materials = new ArrayList<>();
-                materials.add(Map.of("name","Material A","percentage",60.0,"renewable",false,"recycled",true,"recyclable",true));
-                materials.add(Map.of("name","Material B","percentage",40.0,"renewable",true,"recycled",false,"recyclable",true));
-                passport.put("materials", materials);
+            List<Map<String, Object>> materials = new ArrayList<>();
+            materials.add(Map.of("name","Material A","percentage",60.0,"renewable",false,"recycled",true,"recyclable",true));
+            materials.add(Map.of("name","Material B","percentage",40.0,"renewable",true,"recycled",false,"recyclable",true));
+            passport.put("materials", materials);
 
-                Map<String, Object> dur = new HashMap<>();
-                dur.put("expectedLifespanYears", 3 + rnd.nextInt(6));
-                dur.put("repairabilityScore", 3.0 + rnd.nextDouble()*7.0);
-                dur.put("sparePartsAvailable", rnd.nextBoolean());
-                dur.put("warrantyYears", 1 + rnd.nextInt(3));
-                dur.put("softwareUpdates", rnd.nextBoolean());
-                passport.put("durability", dur);
+            Map<String, Object> dur = new HashMap<>();
+            dur.put("expectedLifespanYears", 3 + rnd.nextInt(6));
+            dur.put("repairabilityScore", 3.0 + rnd.nextDouble()*7.0);
+            dur.put("sparePartsAvailable", rnd.nextBoolean());
+            dur.put("warrantyYears", 1 + rnd.nextInt(3));
+            dur.put("softwareUpdates", rnd.nextBoolean());
+            passport.put("durability", dur);
 
-                Map<String, Object> recyclingInfo = new HashMap<>();
-                recyclingInfo.put("recyclablePercentage", 70.0 + rnd.nextDouble()*30.0);
-                recyclingInfo.put("instructions", "Recycle at local points");
-                recyclingInfo.put("takeBackProgram", rnd.nextBoolean());
-                recyclingInfo.put("collectionPoints", List.of());
-                passport.put("recyclingInfo", recyclingInfo);
+            passport.put("certifications", List.of());
 
-                item.put("passport", passport);
-            }
+            Map<String, Object> recyclingInfo = new HashMap<>();
+            recyclingInfo.put("recyclablePercentage", 70.0 + rnd.nextDouble()*30.0);
+            recyclingInfo.put("instructions", "Recycle at local points");
+            recyclingInfo.put("takeBackProgram", rnd.nextBoolean());
+            recyclingInfo.put("collectionPoints", List.of());
+            passport.put("recyclingInfo", recyclingInfo);
+
+            item.put("passport", passport);
 
             list.add(item);
         }

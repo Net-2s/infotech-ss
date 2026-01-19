@@ -63,7 +63,8 @@ public class UserAddressController {
 
         Address address = Address.builder()
                 .user(user)
-                .fullName(dto.getFullName())
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
                 .street(dto.getStreet())
                 .city(dto.getCity())
                 .postalCode(dto.getPostalCode())
@@ -106,7 +107,8 @@ public class UserAddressController {
                     });
         }
 
-        address.setFullName(dto.getFullName());
+        address.setFirstName(dto.getFirstName());
+        address.setLastName(dto.getLastName());
         address.setStreet(dto.getStreet());
         address.setCity(dto.getCity());
         address.setPostalCode(dto.getPostalCode());
@@ -169,7 +171,9 @@ public class UserAddressController {
     private AddressDto convertToDto(Address address) {
         return AddressDto.builder()
                 .id(address.getId())
-                .fullName(address.getFullName())
+                .userId(address.getUser().getId())
+                .firstName(address.getFirstName())
+                .lastName(address.getLastName())
                 .street(address.getStreet())
                 .city(address.getCity())
                 .postalCode(address.getPostalCode())

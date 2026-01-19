@@ -12,9 +12,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AddressDto {
     private Long id;
+    private Long userId;
 
-    @NotBlank(message = "Full name is required")
-    private String fullName;
+    @NotBlank(message = "First name is required")
+    private String firstName;
+
+    @NotBlank(message = "Last name is required")
+    private String lastName;
 
     @NotBlank(message = "Street is required")
     private String street;

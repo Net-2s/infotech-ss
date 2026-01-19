@@ -1,0 +1,143 @@
+[
+  {
+    "title": "iPhone 14 Pro - 256GB",
+    "description": "Excellent condition iPhone 14 Pro, fully tested with warranty",
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "condition": "refurbished",
+    "category": "Smartphones",
+    "imageUrls": [
+      "https://res.cloudinary.com/demo/image/upload/sample.jpg"
+    ],
+    "passport": {
+      "carbonFootprint": {
+        "totalCO2": 55.0,
+        "manufacturing": 40.0,
+        "transportation": 6.0,
+        "usage": 7.0,
+        "endOfLife": 2.0
+      },
+      "traceability": {
+        "originCountry": "China",
+        "manufacturer": "Apple Inc.",
+        "factory": "Foxconn - Shenzhen",
+        "supplyChainJourney": ["Raw materials - Multiple origins", "Assembly - China", "Distribution - France"],
+        "transparencyScore": 85
+      },
+      "materials": [
+        {"name":"Aluminum recycled","percentage":45.0,"renewable":false,"recycled":true,"recyclable":true},
+        {"name":"Glass","percentage":20.0,"renewable":false,"recycled":true,"recyclable":true},
+        {"name":"Electronic components","percentage":30.0,"renewable":false,"recycled":false,"recyclable":true},
+        {"name":"Plastic","percentage":5.0,"renewable":false,"recycled":false,"recyclable":true}
+      ],
+      "durability": {
+        "expectedLifespanYears": 5,
+        "repairabilityScore": 6.5,
+        "sparePartsAvailable": true,
+        "warrantyYears": 2,
+        "softwareUpdates": true
+      },
+      "certifications": [],
+      "recyclingInfo": {
+        "recyclablePercentage": 90.0,
+        "instructions": "Recycle at Apple Store or authorized centers",
+        "takeBackProgram": true,
+        "collectionPoints": []
+      }
+    }
+  },
+  {
+    "title": "Samsung Galaxy S23 Ultra - 512GB",
+    "description": "Like new Samsung Galaxy S23 Ultra, unlocked",
+    "brand": "Samsung",
+    "model": "Galaxy S23 Ultra",
+    "condition": "like new",
+    "category": "Smartphones",
+    "imageUrls": [
+      "https://res.cloudinary.com/demo/image/upload/sample.jpg"
+    ],
+    "passport": {
+      "carbonFootprint": {
+        "totalCO2": 52.0,
+        "manufacturing": 38.0,
+        "transportation": 5.5,
+        "usage": 6.5,
+        "endOfLife": 2.0
+      },
+      "traceability": {
+        "originCountry": "South Korea",
+        "manufacturer": "Samsung Electronics",
+        "factory": "Samsung Factory - Vietnam",
+        "supplyChainJourney": ["Raw materials - Multiple origins", "Assembly - Vietnam", "Distribution - France"],
+        "transparencyScore": 88
+      },
+      "materials": [
+        {"name":"Aluminum recycled","percentage":42.0,"renewable":false,"recycled":true,"recyclable":true},
+        {"name":"Gorilla Glass Victus","percentage":22.0,"renewable":false,"recycled":false,"recyclable":true},
+        {"name":"Electronic components","percentage":31.0,"renewable":false,"recycled":false,"recyclable":true},
+        {"name":"Plastic bio-based","percentage":5.0,"renewable":true,"recycled":false,"recyclable":true}
+      ],
+      "durability": {
+        "expectedLifespanYears": 6,
+        "repairabilityScore": 7.8,
+        "sparePartsAvailable": true,
+        "warrantyYears": 2,
+        "softwareUpdates": true
+      },
+      "certifications": [],
+      "recyclingInfo": {
+        "recyclablePercentage": 92.0,
+        "instructions": "Recycle at Samsung Service Centers or certified e-waste facilities",
+        "takeBackProgram": true,
+        "collectionPoints": []
+      }
+    }
+  },
+  {
+    "title": "MacBook Pro 14 M3 Pro - 18GB RAM",
+    "description": "Powerful MacBook Pro with M3 Pro chip, perfect for professionals",
+    "brand": "Apple",
+    "model": "MacBook Pro 14",
+    "condition": "new",
+    "category": "Laptops",
+    "imageUrls": [
+      "https://res.cloudinary.com/demo/image/upload/sample.jpg"
+    ],
+    "passport": {
+      "carbonFootprint": {
+        "totalCO2": 120.0,
+        "manufacturing": 85.0,
+        "transportation": 12.0,
+        "usage": 20.0,
+        "endOfLife": 3.0
+      },
+      "traceability": {
+        "originCountry": "China",
+        "manufacturer": "Apple Inc.",
+        "factory": "Foxconn - Shanghai",
+        "supplyChainJourney": ["Raw materials - Multiple", "Assembly - China", "Distribution - France"],
+        "transparencyScore": 82
+      },
+      "materials": [
+        {"name":"Recycled Aluminum","percentage":50.0,"renewable":false,"recycled":true,"recyclable":true},
+        {"name":"Glass and display","percentage":15.0,"renewable":false,"recycled":false,"recyclable":true},
+        {"name":"Electronic components","percentage":30.0,"renewable":false,"recycled":false,"recyclable":true},
+        {"name":"Battery (Lithium)","percentage":5.0,"renewable":false,"recycled":false,"recyclable":true}
+      ],
+      "durability": {
+        "expectedLifespanYears": 7,
+        "repairabilityScore": 5.5,
+        "sparePartsAvailable": true,
+        "warrantyYears": 1,
+        "softwareUpdates": true
+      },
+      "certifications": [],
+      "recyclingInfo": {
+        "recyclablePercentage": 88.0,
+        "instructions": "Return to Apple for recycling through Apple Trade In program",
+        "takeBackProgram": true,
+        "collectionPoints": []
+      }
+    }
+  }
+]

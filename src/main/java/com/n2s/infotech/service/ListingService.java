@@ -7,5 +7,6 @@ import org.springframework.data.domain.Pageable;
 public interface ListingService {
     Page<ListingDto> listListings(Pageable pageable, String search);
     ListingDto getListing(Long id);
+    Page<ListingDto> getListingsByProduct(Long productId, Pageable pageable);
 }
 

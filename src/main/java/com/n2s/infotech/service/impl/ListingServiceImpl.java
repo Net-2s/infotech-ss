@@ -36,6 +36,13 @@ public class ListingServiceImpl implements ListingService {
         Listing l = listingRepository.findById(id).orElseThrow(() -> new RuntimeException("Listing not found"));
         return toDto(l);
     }
+    
+    @Override
+    public Page<ListingDto> getListingsByProduct(Long productId, Pageable pageable) {
+        Page<Listing> page = listingRepository.findByProductIdAndActiveTrue(productId, pageable);
+        List<ListingDto> dtos = page.stream().map(this::toDto).collect(Collectors.toList());
+        return new PageImpl<>(dtos, pageable, page.getTotalElements());
+    }
 
     private ListingDto toDto(Listing l) {
         List<String> images = l.getProduct().getImages().stream().map(ProductImage::getUrl).collect(Collectors.toList());

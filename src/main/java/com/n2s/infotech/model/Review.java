@@ -28,6 +28,9 @@ public class Review {
 
     private Integer rating; // 1-5
 
+    @Column(length = 200)
+    private String title; // Titre de l'avis (optionnel)
+
     @Column(columnDefinition = "text")
     private String comment;
 

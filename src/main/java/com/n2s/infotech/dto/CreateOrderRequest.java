@@ -13,6 +13,11 @@ import java.util.List;
 public class CreateOrderRequest {
     @NotNull
     private Long buyerId;
+    
     @NotNull
     private List<OrderItemRequestDto> items;
+    
+    private String paymentIntentId;
+    
+    private ShippingAddressDto shippingAddress;
 }

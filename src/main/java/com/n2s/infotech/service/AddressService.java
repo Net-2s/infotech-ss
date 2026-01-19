@@ -25,7 +25,7 @@ public class AddressService {
      * Récupère toutes les adresses d'un utilisateur
      */
     public List<AddressDto> getUserAddresses(Long userId) {
-        return addressRepository.findByUserId(userId).stream()
+        return addressRepository.findByUserIdOrderByIsDefaultDescCreatedAtDesc(userId).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
@@ -48,7 +48,8 @@ public class AddressService {
 
         Address address = Address.builder()
                 .user(user)
-                .fullName(dto.getFullName())
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
                 .street(dto.getStreet())
                 .city(dto.getCity())
                 .postalCode(dto.getPostalCode())
@@ -81,7 +82,8 @@ public class AddressService {
                     });
         }
 
-        address.setFullName(dto.getFullName());
+        address.setFirstName(dto.getFirstName());
+        address.setLastName(dto.getLastName());
         address.setStreet(dto.getStreet());
         address.setCity(dto.getCity());
         address.setPostalCode(dto.getPostalCode());
@@ -108,12 +110,39 @@ public class AddressService {
     }
 
     /**
+     * Définit une adresse comme adresse par défaut
+     */
+    public AddressDto setDefaultAddress(Long addressId, Long userId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new RuntimeException("Address not found"));
+
+        // Vérifier que l'adresse appartient à l'utilisateur
+        if (!address.getUser().getId().equals(userId)) {
+            throw new RuntimeException("You can only modify your own addresses");
+        }
+
+        // Retirer le flag par défaut des autres adresses
+        addressRepository.findByUserIdAndIsDefaultTrue(userId)
+                .ifPresent(addr -> {
+                    if (!addr.getId().equals(addressId)) {
+                        addr.setIsDefault(false);
+                        addressRepository.save(addr);
+                    }
+                });
+
+        address.setIsDefault(true);
+        return convertToDto(addressRepository.save(address));
+    }
+
+    /**
      * Convertit une Address en DTO
      */
     private AddressDto convertToDto(Address address) {
         return AddressDto.builder()
                 .id(address.getId())
-                .fullName(address.getFullName())
+                .userId(address.getUser().getId())
+                .firstName(address.getFirstName())
+                .lastName(address.getLastName())
                 .street(address.getStreet())
                 .city(address.getCity())
                 .postalCode(address.getPostalCode())

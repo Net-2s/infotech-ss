@@ -27,5 +27,10 @@ public class ListingController {
     public ListingDto get(@PathVariable Long id) {
         return listingService.getListing(id);
     }
+    
+    @GetMapping("/by-product/{productId}")
+    public Page<ListingDto> getByProduct(@PathVariable Long productId, Pageable pageable) {
+        return listingService.getListingsByProduct(productId, pageable);
+    }
 }
 

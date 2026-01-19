@@ -29,6 +29,15 @@ public class Order {
 
     private BigDecimal total;
 
+    @Column(name = "payment_intent_id")
+    private String paymentIntentId;
+
+    @Column(name = "payment_status")
+    private String paymentStatus; // pending, succeeded, failed
+
+    @Column(name = "shipping_address", columnDefinition = "TEXT")
+    private String shippingAddress; // JSON string de ShippingAddressDto
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 

@@ -38,9 +38,18 @@ public class ReviewService {
     public ReviewStatsDto getProductReviewStats(Long productId) {
         Double avgRating = reviewRepository.getAverageRatingByProductId(productId);
         Long totalReviews = reviewRepository.countByProductId(productId);
+        
+        // Calculer la distribution des notes (1-5 étoiles)
+        java.util.Map<Integer, Long> ratingCounts = new java.util.HashMap<>();
+        for (int i = 1; i <= 5; i++) {
+            Long count = reviewRepository.countByProductIdAndRating(productId, i);
+            ratingCounts.put(i, count != null ? count : 0L);
+        }
+        
         return new ReviewStatsDto(
                 avgRating != null ? avgRating : 0.0,
-                totalReviews
+                totalReviews,
+                ratingCounts
         );
     }
 
@@ -62,6 +71,7 @@ public class ReviewService {
                 .product(product)
                 .user(user)
                 .rating(dto.getRating())
+                .title(dto.getTitle())
                 .comment(dto.getComment())
                 .verified(false) // Sera vérifié après achat
                 .build();
@@ -94,6 +104,7 @@ public class ReviewService {
                 .userId(review.getUser().getId())
                 .userName(review.getUser().getDisplayName())
                 .rating(review.getRating())
+                .title(review.getTitle())
                 .comment(review.getComment())
                 .createdAt(review.getCreatedAt())
                 .verified(review.getVerified())

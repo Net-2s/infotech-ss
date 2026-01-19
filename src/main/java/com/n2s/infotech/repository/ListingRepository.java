@@ -27,5 +27,7 @@ public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpec
 
     @Query("SELECT l FROM Listing l WHERE l.product.id = :productId AND l.active = true ORDER BY l.price ASC")
     List<Listing> findCheapestListingsByProduct(Long productId);
+    
+    boolean existsByProductIdAndSellerId(Long productId, Long sellerId);
 }
 

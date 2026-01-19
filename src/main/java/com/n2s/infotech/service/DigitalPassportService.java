@@ -21,6 +21,11 @@ public class DigitalPassportService {
     private final DigitalPassportRepository digitalPassportRepository;
 
     @Transactional(readOnly = true)
+    public boolean existsByProductId(Long productId) {
+        return digitalPassportRepository.existsByProductId(productId);
+    }
+
+    @Transactional(readOnly = true)
     public DigitalPassportDto getByProductId(Long productId) {
         log.info("Fetching digital passport for product ID: {}", productId);
         DigitalPassport passport = digitalPassportRepository.findByProductId(productId)
