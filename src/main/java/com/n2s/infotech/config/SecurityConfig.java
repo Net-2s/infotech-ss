@@ -100,8 +100,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Autoriser les requêtes depuis le frontend Angular
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        // Autoriser les requêtes depuis le frontend (local + production)
+        String allowedOrigins = System.getenv().getOrDefault("CORS_ALLOWED_ORIGINS", "http://localhost:4200");
+        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
 
         // Autoriser toutes les méthodes HTTP
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
